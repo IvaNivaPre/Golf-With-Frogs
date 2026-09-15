@@ -28,7 +28,7 @@ public class GameView extends View {
 
     private float lastTouchX;
     private float lastTouchY;
-    private int activePointerId = 1;
+    private int activePointerId = -1;
 
     private final ScaleGestureDetector scaleDetector;
 
@@ -62,17 +62,27 @@ public class GameView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         scaleDetector.onTouchEvent(event);
 
-        final int action = event.getActionMasked(); // ?
+        final int action = event.getActionMasked();
 
         switch (action) {
-            case MotionEvent.ACTION_DOWN: { // Что за ACTION DOWN
+            case MotionEvent.ACTION_DOWN: {
                 lastTouchX = event.getX();
                 lastTouchY = event.getY();
-                activePointerId = event.getPointerId(0); // Что за аргумент
+                activePointerId = event.getPointerId(0);
+
+                if (lastTouchX < 200 && lastTouchY < 200) {
+                    // Задаем мячу случайную скорость для теста отскоков
+                    float randomVx = (float) (Math.random() * 1000 - 500); // от -500 до 500
+                    float randomVy = (float) (Math.random() * 1000 - 500);
+                    ball.strike(randomVx, randomVy);
+
+                    return true; // Прерываем метод, чтобы камера не дергалась при нажатии на кнопку
+                }
+
                 break;
             }
 
-            case MotionEvent.ACTION_MOVE: { // Что это за блок?
+            case MotionEvent.ACTION_MOVE: {
                 if (scaleDetector.isInProgress()) break;
 
                 final int pointerIndex = event.findPointerIndex(activePointerId);
@@ -94,7 +104,7 @@ public class GameView extends View {
                 break;
             }
 
-            case MotionEvent.ACTION_UP:  // Почему тут так написано? Это что-то вроде или?
+            case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL: {
                 activePointerId = -1;
                 break;

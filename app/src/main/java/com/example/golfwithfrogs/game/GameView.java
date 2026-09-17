@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.View;
 import android.view.ScaleGestureDetector;
 import android.view.MotionEvent;
@@ -37,6 +39,7 @@ public class GameView extends View {
     private List<Wall> walls;
     private final Physics physics;
     private long lastFrameTime;
+    private Context context;
 
 
     public GameView(Context context) {
@@ -52,8 +55,8 @@ public class GameView extends View {
 
         walls.add(new Wall(200, 200, 1600, 40));
         walls.add(new Wall(200, 1760, 1600, 40));
-        walls.add(new Wall(200, 1760, 40, 160));
-        walls.add(new Wall(1760, 200, 40, 160));
+        walls.add(new Wall(200, 200, 40, 1760));
+        walls.add(new Wall(1600, 200, 40, 1760));
 
         scaleDetector = new ScaleGestureDetector(context, new ScaleListener());
     }
@@ -69,12 +72,37 @@ public class GameView extends View {
                 lastTouchX = event.getX();
                 lastTouchY = event.getY();
                 activePointerId = event.getPointerId(0);
+                float speed = 1000;
 
                 if (lastTouchX < 200 && lastTouchY < 200) {
                     // Задаем мячу случайную скорость для теста отскоков
                     float randomVx = (float) (Math.random() * 1000 - 500); // от -500 до 500
                     float randomVy = (float) (Math.random() * 1000 - 500);
-                    ball.strike(randomVx, randomVy);
+                    ball.strike(speed, speed);
+
+                    return true; // Прерываем метод, чтобы камера не дергалась при нажатии на кнопку
+                }
+                if (lastTouchX > getWidth() - 200 && lastTouchY < 200) {
+                    // Задаем мячу случайную скорость для теста отскоков
+                    float randomVx = (float) (Math.random() * 1000 - 500); // от -500 до 500
+                    float randomVy = (float) (Math.random() * 1000 - 500);
+                    ball.strike(-speed, speed);
+
+                    return true;
+                }
+                if (lastTouchX > getWidth() - 200 && lastTouchY > getHeight() - 200) {
+                    // Задаем мячу случайную скорость для теста отскоков
+                    float randomVx = (float) (Math.random() * 1000 - 500); // от -500 до 500
+                    float randomVy = (float) (Math.random() * 1000 - 500);
+                    ball.strike(-speed, -speed);
+
+                    return true;
+                }
+                if (lastTouchX < 200 && lastTouchY > getHeight() - 200) {
+                    // Задаем мячу случайную скорость для теста отскоков
+                    float randomVx = (float) (Math.random() * 1000 - 500); // от -500 до 500
+                    float randomVy = (float) (Math.random() * 1000 - 500);
+                    ball.strike(speed, -speed);
 
                     return true; // Прерываем метод, чтобы камера не дергалась при нажатии на кнопку
                 }

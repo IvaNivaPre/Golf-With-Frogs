@@ -21,7 +21,7 @@ public class Wall extends GameObject {
 
     public void draw(Canvas canvas, Paint paint) {
         paint.setColor(Color.DKGRAY);
-        canvas.drawRect(x, y, this.width, this.height, paint);
+        canvas.drawRect(x, y, x + this.width, y + this.height, paint);
     }
 
     public float getWidth() { return this.width; }
